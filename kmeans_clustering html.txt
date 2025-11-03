@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>K Means Clustering Report</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm;
+        }
+        @media print {
+            body {
+                margin: 0;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            font-size: 11pt;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 24pt;
+            margin-top: 0;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            font-size: 18pt;
+            border-bottom: 2px solid #95a5a6;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            font-size: 14pt;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 9pt;
+        }
+        pre {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 4px;
+            page-break-inside: avoid;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 9pt;
+        }
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        ul, ol {
+            margin-left: 20px;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+        p {
+            text-align: justify;
+            margin-bottom: 12px;
+        }
+        .author-info {
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>K Means Clustering: A Comprehensive Report</h1>
+
+    <p class="author-info"><strong>Author:</strong> MRCE<br>
+    <strong>Date:</strong> October 28, 2025</p>
+
+    <hr>
+
+    <h2>1. Introduction</h2>
+
+    <p>K Means Clustering is one of the most widely used unsupervised machine learning algorithms for partitioning data into distinct groups or clusters. The algorithm aims to divide n observations into k clusters, where each observation belongs to the cluster with the nearest mean (centroid). This report explores the theoretical foundations, algorithmic implementation, practical applications, and limitations of K Means Clustering.</p>
+
+    <p>The simplicity and efficiency of K Means make it a popular choice for exploratory data analysis, customer segmentation, image compression, and pattern recognition tasks across various domains including marketing, biology, computer vision, and astronomy.</p>
+
+    <hr>
+
+    <h2>2. Theoretical Background</h2>
+
+    <h3>2.1 Problem Formulation</h3>
+
+    <p>Given a dataset of n observations <strong>X = {x₁, x₂, ..., xₙ}</strong>, where each observation is a d-dimensional vector, the K Means algorithm aims to partition the observations into k clusters <strong>C = {C₁, C₂, ..., Cₖ}</strong> such that the within-cluster sum of squares (WCSS) is minimized.</p>
+
+    <p>The objective function is defined as:</p>
+
+    <pre><code>minimize: Σᵢ₌₁ᵏ Σₓ∈Cᵢ ||x - μᵢ||²</code></pre>
+
+    <p>where <strong>μᵢ</strong> is the centroid (mean) of cluster Cᵢ.</p>
+
+    <h3>2.2 Algorithm Description</h3>
+
+    <p>The K Means algorithm follows an iterative refinement approach:</p>
+
+    <ol>
+        <li><strong>Initialization:</strong> Select k initial centroids randomly from the dataset or using sophisticated methods like K-Means++</li>
+        <li><strong>Assignment Step:</strong> Assign each data point to the nearest centroid based on Euclidean distance</li>
+        <li><strong>Update Step:</strong> Recalculate centroids as the mean of all points assigned to each cluster</li>
+        <li><strong>Convergence Check:</strong> Repeat steps 2-3 until centroids no longer change significantly or maximum iterations reached</li>
+    </ol>
+
+    <h3>2.3 Distance Metrics</h3>
+
+    <p>While Euclidean distance is most commonly used, other distance metrics can be applied:</p>
+
+    <ul>
+        <li><strong>Euclidean Distance:</strong> d(x, y) = √(Σ(xᵢ - yᵢ)²)</li>
+        <li><strong>Manhattan Distance:</strong> d(x, y) = Σ|xᵢ - yᵢ|</li>
+        <li><strong>Cosine Similarity:</strong> Used for text clustering and high-dimensional data</li>
+    </ul>
+
+    <hr>
+
+    <h2>3. Implementation</h2>
+
+    <h3>3.1 Python Implementation</h3>
+
+    <p>Below is a complete implementation of K Means Clustering using Python with NumPy and visualization using Matplotlib:</p>
+
+    <pre><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+
+# Generate sample data
+np.random.seed(42)
+X, y_true = make_blobs(n_samples=300, centers=4, 
+                       cluster_std=0.60, random_state=0)
+
+# Apply K Means Clustering
+kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
+y_pred = kmeans.fit_predict(X)
+centroids = kmeans.cluster_centers_
+
+# Visualize results
+plt.figure(figsize=(10, 6))
+plt.scatter(X[:, 0], X[:, 1], c=y_pred, s=50, cmap='viridis', alpha=0.6)
+plt.scatter(centroids[:, 0], centroids[:, 1], c='red', 
+            s=200, marker='X', edgecolors='black', linewidths=2)
+plt.title('K Means Clustering Results')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.colorbar(label='Cluster')
+plt.grid(True, alpha=0.3)
+plt.savefig('kmeans_result.png', dpi=300, bbox_inches='tight')
+plt.show()</code></pre>
+
+    <h3>3.2 Determining Optimal k</h3>
+
+    <p>The Elbow Method helps identify the optimal number of clusters:</p>
+
+    <pre><code># Elbow Method
+wcss = []
+k_range = range(1, 11)
+
+for k in k_range:
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+    kmeans.fit(X)
+    wcss.append(kmeans.inertia_)
+
+# Plot Elbow Curve
+plt.figure(figsize=(8, 5))
+plt.plot(k_range, wcss, 'bo-', linewidth=2, markersize=8)
+plt.xlabel('Number of Clusters (k)')
+plt.ylabel('Within-Cluster Sum of Squares (WCSS)')
+plt.title('Elbow Method for Optimal k')
+plt.grid(True, alpha=0.3)
+plt.savefig('elbow_method.png', dpi=300, bbox_inches='tight')
+plt.show()</code></pre>
+
+    <hr>
+
+    <h2>4. Applications</h2>
+
+    <h3>4.1 Customer Segmentation</h3>
+
+    <p>Businesses use K Means to segment customers based on purchasing behavior, demographics, and engagement metrics. This enables targeted marketing campaigns and personalized customer experiences.</p>
+
+    <h3>4.2 Image Compression</h3>
+
+    <p>K Means can reduce the number of colors in an image by clustering similar colors together, significantly reducing file size while maintaining visual quality.</p>
+
+    <h3>4.3 Document Classification</h3>
+
+    <p>In natural language processing, K Means clusters documents based on term frequency vectors, enabling automatic categorization of large text corpora.</p>
+
+    <h3>4.4 Anomaly Detection</h3>
+
+    <p>By identifying data points that are far from any cluster centroid, K Means can help detect outliers and anomalies in various domains including fraud detection and network security.</p>
+
+    <h3>4.5 Medical Imaging</h3>
+
+    <p>K Means assists in segmenting medical images to identify regions of interest, such as tumor detection in MRI scans or cell classification in microscopy.</p>
+
+    <hr>
+
+    <h2>5. Advantages and Limitations</h2>
+
+    <h3>5.1 Advantages</h3>
+
+    <ul>
+        <li><strong>Simplicity:</strong> Easy to understand and implement</li>
+        <li><strong>Scalability:</strong> Efficient for large datasets with time complexity O(n·k·i·d)</li>
+        <li><strong>Speed:</strong> Fast convergence in most practical scenarios</li>
+        <li><strong>Versatility:</strong> Applicable across diverse domains and data types</li>
+    </ul>
+
+    <h3>5.2 Limitations</h3>
+
+    <ul>
+        <li><strong>Fixed k:</strong> Requires predetermined number of clusters</li>
+        <li><strong>Initialization Sensitivity:</strong> Different initializations may produce different results</li>
+        <li><strong>Spherical Clusters:</strong> Assumes clusters are spherical and equally sized</li>
+        <li><strong>Outlier Sensitivity:</strong> Centroids can be skewed by outliers</li>
+        <li><strong>Local Optima:</strong> May converge to local rather than global minima</li>
+    </ul>
+
+    <h3>5.3 Improvements and Variants</h3>
+
+    <ul>
+        <li><strong>K-Means++:</strong> Smart initialization to improve convergence</li>
+        <li><strong>Mini-Batch K-Means:</strong> Uses random samples for faster computation</li>
+        <li><strong>Fuzzy C-Means:</strong> Allows soft cluster assignments</li>
+        <li><strong>X-Means:</strong> Automatically determines optimal k</li>
+    </ul>
+
+    <hr>
+
+    <h2>6. Practical Example: Iris Dataset</h2>
+
+    <p>The classic Iris dataset provides an excellent demonstration of K Means clustering:</p>
+
+    <pre><code>from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+
+# Load and preprocess data
+iris = load_iris()
+X_iris = iris.data
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_iris)
+
+# Apply K Means
+kmeans_iris = KMeans(n_clusters=3, random_state=42, n_init=10)
+predictions = kmeans_iris.fit_predict(X_scaled)
+
+# Evaluate clustering
+from sklearn.metrics import silhouette_score, davies_bouldin_score
+
+silhouette = silhouette_score(X_scaled, predictions)
+davies_bouldin = davies_bouldin_score(X_scaled, predictions)
+
+print(f"Silhouette Score: {silhouette:.3f}")
+print(f"Davies-Bouldin Index: {davies_bouldin:.3f}")</code></pre>
+
+    <p><strong>Results Interpretation:</strong></p>
+    <ul>
+        <li>Silhouette Score ranges from -1 to 1, with higher values indicating better-defined clusters</li>
+        <li>Davies-Bouldin Index measures cluster separation, with lower values indicating better clustering</li>
+    </ul>
+
+    <hr>
+
+    <h2>7. Evaluation Metrics</h2>
+
+    <h3>7.1 Internal Metrics (No Ground Truth Required)</h3>
+
+    <ul>
+        <li><strong>Silhouette Coefficient:</strong> Measures how similar an object is to its own cluster compared to other clusters</li>
+        <li><strong>Davies-Bouldin Index:</strong> Ratio of within-cluster to between-cluster distances</li>
+        <li><strong>Calinski-Harabasz Index:</strong> Ratio of between-cluster to within-cluster dispersion</li>
+    </ul>
+
+    <h3>7.2 External Metrics (Ground Truth Required)</h3>
+
+    <ul>
+        <li><strong>Adjusted Rand Index (ARI):</strong> Measures similarity between true and predicted clusters</li>
+        <li><strong>Normalized Mutual Information (NMI):</strong> Quantifies mutual information between clusterings</li>
+        <li><strong>Fowlkes-Mallows Index:</strong> Geometric mean of precision and recall</li>
+    </ul>
+
+    <hr>
+
+    <h2>8. Conclusion</h2>
+
+    <p>K Means Clustering remains a foundational algorithm in machine learning and data science due to its simplicity, efficiency, and effectiveness across diverse applications. While it has inherent limitations such as sensitivity to initialization and the requirement to predefine k, various improvements and extensions have been developed to address these challenges.</p>
+
+    <p>Understanding K Means provides essential insights into unsupervised learning principles and serves as a stepping stone to more advanced clustering techniques. Its continued relevance in industry applications—from customer analytics to image processing—demonstrates the enduring value of this elegant algorithm.</p>
+
+    <p>For practitioners, success with K Means depends on careful data preprocessing, appropriate selection of k using methods like the Elbow Method or Silhouette Analysis, and awareness of the algorithm's assumptions about cluster shape and size. When these considerations are properly addressed, K Means delivers robust and interpretable clustering results that drive actionable insights.</p>
+
+    <hr>
+
+    <h2>References</h2>
+
+    <ol>
+        <li>MacQueen, J. (1967). "Some methods for classification and analysis of multivariate observations." Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics and Probability.</li>
+        <li>Arthur, D., & Vassilvitskii, S. (2007). "k-means++: The advantages of careful seeding." Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms.</li>
+        <li>Hartigan, J. A., & Wong, M. A. (1979). "Algorithm AS 136: A k-means clustering algorithm." Journal of the Royal Statistical Society Series C.</li>
+        <li>Jain, A. K. (2010). "Data clustering: 50 years beyond K-means." Pattern Recognition Letters, 31(8), 651-666.</li>
+        <li>Pedregosa, F., et al. (2011). "Scikit-learn: Machine Learning in Python." Journal of Machine Learning Research, 12, 2825-2830.</li>
+    </ol>
+
+    <hr>
+
+    <p style="text-align: center;"><strong>End of Report</strong></p>
+</body>
+</html>
